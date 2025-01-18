@@ -1,7 +1,9 @@
 const express = require('express');
+const axios = require('axios');
 const passport = require('passport');
 const session = require('express-session');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const cors = require('cors');
 
 const app = express();
 
@@ -12,8 +14,18 @@ app.use(session({
   saveUninitialized: true
 }));
 
+app.use(express.json()); 
+
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(cors({
+    origin: 'http://localhost:3001',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true,  // Enable credentials (cookies, HTTP authentication)
+  }));
+  
 
 // Google OAuth Strategy setup
 passport.use(new GoogleStrategy({
@@ -33,11 +45,12 @@ passport.deserializeUser((user, done) => {
   done(null, user);  // Retrieve the user info from session
 });
 
-// Routes
+// Route to initiate Google login
 app.get('/auth/google', passport.authenticate('google', {
   scope: ['profile', 'email']
 }));
 
+// Callback route to handle response from Google
 app.get('/auth/google/callback', passport.authenticate('google', {
   failureRedirect: '/'
 }), (req, res) => {
@@ -45,12 +58,32 @@ app.get('/auth/google/callback', passport.authenticate('google', {
   res.redirect('/profile');
 });
 
+// Profile route to return user info
 app.get('/profile', (req, res) => {
   // Check if user is logged in (session exists)
   if (!req.isAuthenticated()) {
     return res.redirect('/');
   }
   res.json(req.user); // User data is available in req.user
+});
+
+// Route to verify Google ID token using Axios
+app.post('/verify-token', async (req, res) => {
+  const { token } = req.body;  // Assume the token is passed in the request body
+
+  try {
+    // Call Google's OAuth tokeninfo endpoint to verify the token
+    const response = await axios.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`);
+    const userData = response.data;  // This contains the user's info
+
+    console.log('Verified user data:', userData);
+
+    // Send the user data back to the client
+    res.json(userData);
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    res.status(500).json({ error: 'Error verifying token' });
+  }
 });
 
 // Start server
