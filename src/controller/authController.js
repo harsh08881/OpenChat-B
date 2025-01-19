@@ -8,9 +8,9 @@ const {
   GOOGLE_AUTH_URL,
   GOOGLE_TOKEN_URL,
   GOOGLE_USERINFO_URL,
+  SECRET_KEY
 } = require("../utils/constant");
 const { saveGoogleUser } = require('../services/auth');
-const { SECRET_KEY } =- require('../utils/constant')
 const jwt = require("jsonwebtoken");
 
 
