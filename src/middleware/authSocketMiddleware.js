@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { SECRET_KEY } =- require('../utils/constant')
+const { SECRET_KEY } = require('../utils/constant')
 
 /**
  * Middleware to authenticate a Socket.IO connection

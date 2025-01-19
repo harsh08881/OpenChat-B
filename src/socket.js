@@ -1,4 +1,5 @@
 const { Server } = require("socket.io");
+const socketAuthMiddleware = require('./middleware/authSocketMiddleware')
 
 const initSocket = (server) => {
   const io = new Server(server, {
@@ -9,20 +10,7 @@ const initSocket = (server) => {
   });
 
   // Middleware for socket authentication (optional)
-  io.use((socket, next) => {
-    const token = socket.handshake.auth.token; // Pass token during connection
-    if (!token) {
-      return next(new Error("Unauthorized: Token not provided"));
-    }
-    try {
-      // Example: Verify token logic (replace with your token validation)
-      socket.user = { id: token }; // Attach user data to socket
-      next();
-    } catch (err) {
-      console.error("Socket authentication failed:", err.message);
-      next(new Error("Forbidden: Invalid token"));
-    }
-  });
+  io.use(socketAuthMiddleware);
 
   // Define connection behavior
   io.on("connection", (socket) => {
