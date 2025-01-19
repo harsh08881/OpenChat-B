@@ -1,4 +1,5 @@
 const { Server } = require("socket.io");
+const { ExpressPeerServer } = require('peer');
 const socketAuthMiddleware = require('./middleware/authSocketMiddleware')
 
 const initSocket = (server) => {

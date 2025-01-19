@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 require("dotenv").config(); 
 const http = require('http'); // Required to bind Socket.IO to the HTTP server
+const { ExpressPeerServer } = require('peer'); 
 const cors = require('cors');
 const connectDB = require('./config/connectdb');
 const router = require('./src/routes');
@@ -22,6 +23,14 @@ app.use('/', router);
 
 // Create HTTP server and bind it to Express
 const server = http.createServer(app);
+
+
+const peerServer = ExpressPeerServer(server, {
+  debug: true,
+  path: '/peerjs',  // Path for PeerJS
+});
+
+app.use('/peerjs', peerServer);
 
 // Initialize Socket.IO
 initSocket(server);
