@@ -17,6 +17,7 @@ const socketAuthMiddleware = (socket, next) => {
 
     // Attach decoded user data to the socket object
     socket.user = decoded;
+    console.log(decoded);
 
     // Proceed to the next middleware
     next();
