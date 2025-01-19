@@ -1,3 +1,5 @@
+const querystring = require('querystring');
+const axios =  require('axios')
 const {
   CLIENT_ID,
   CLIENT_SECRET,
@@ -7,6 +9,7 @@ const {
   GOOGLE_TOKEN_URL,
   GOOGLE_USERINFO_URL,
 } = require("../utils/constant");
+
 
 const googleAuthController = (req, res) => {
   const params = querystring.stringify({

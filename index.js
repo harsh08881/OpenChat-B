@@ -5,7 +5,7 @@ const connectDB = require('./config/connectdb')
 const cors = require('cors');
 const router = require('./src/routes')
 const PORT = process.env.PORT || 3002;
-const querystring = require('querystring');
+
 
 const app = express();
 
