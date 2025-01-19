@@ -1,25 +1,34 @@
 const express = require('express');
 const axios = require('axios');
 require("dotenv").config(); 
-const connectDB = require('./config/connectdb')
+const http = require('http'); // Required to bind Socket.IO to the HTTP server
 const cors = require('cors');
-const router = require('./src/routes')
+const connectDB = require('./config/connectdb');
+const router = require('./src/routes');
+const initSocket = require('./src/socket'); // Import the Socket.IO initialization
 const PORT = process.env.PORT || 3002;
-
 
 const app = express();
 
+// Middleware
 app.use(express.json());
-app.use(cors()); 
+app.use(cors());
 
+// Database connection
 connectDB();
 
+// Routes
 app.use('/', router);
 
+// Create HTTP server and bind it to Express
+const server = http.createServer(app);
 
-app.listen(PORT, () => {
+// Initialize Socket.IO
+initSocket(server);
+
+// Start server
+server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-
 
 module.exports = app;
