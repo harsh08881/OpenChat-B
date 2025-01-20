@@ -5,9 +5,10 @@ const socketAuthMiddleware = require('./middleware/authSocketMiddleware');
 const initSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "*", // Replace with your client domain for better security
-      methods: ["GET", "POST"],
-    },
+        origin: "http://localhost:3000", // Replace with your frontend URL
+        methods: ["GET", "POST"],
+        credentials: true,
+      },
   });
 
   // Middleware for socket authentication (optional)
@@ -17,23 +18,24 @@ const initSocket = (server) => {
 
   // Define connection behavior
   io.on("connection", (socket) => {
-    console.log("A user connected:", socket.user?.id);
+    console.log("A user connected:", socket.user.userId);
 
     // Add user to the waiting queue
-    waitingUsers.push(socket.user?.id);
+    waitingUsers.push(socket.user.userId);
+    console.log(waitingUsers)
 
     // Handle match event when user clicks "Match"
     socket.on("match", () => {
-      console.log(`User ${socket.user?.id} clicked match button`);
-      matchUser(socket.user?.id);
+      console.log(`User ${socket.user.userId} clicked match button`);
+      matchUser(socket.user.userId);
     });
 
     // Handle disconnect
     socket.on("disconnect", () => {
-      console.log("User disconnected:", socket.user?.id);
+      console.log("User disconnected:", socket.user.userId);
 
       // Remove user from the waiting queue
-      waitingUsers = waitingUsers.filter(id => id !== socket.user?.id);
+      waitingUsers = waitingUsers.filter(id => id !== socket.user.userId);
 
       // Attempt to match remaining users again after a disconnection
       matchUser(socket.user?.id);

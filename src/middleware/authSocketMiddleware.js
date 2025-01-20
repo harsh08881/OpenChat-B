@@ -6,6 +6,7 @@ const { SECRET_KEY } = require('../utils/constant')
  */
 const socketAuthMiddleware = (socket, next) => {
   const token = socket.handshake.auth.token; // Token from client during handshake
+  console.log(token)
 
   if (!token) {
     return next(new Error("Unauthorized: Token not provided"));

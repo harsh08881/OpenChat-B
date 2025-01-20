@@ -8,9 +8,8 @@ router.get("/", (req, res) => {
 });
 
 
-router.get('/auth/google', authController.googleAuthController);
-router.get('/auth/google/callback',authController.googleCallbackController)
 
+router.post('/google', authController.googleLogin);
 
 
 
