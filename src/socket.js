@@ -5,7 +5,7 @@ const { generatePeerId }  = require('./utils/function')
 const initSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "https://vodeo-three.vercel.app", // Replace with your frontend URL
+      origin: "*", // Replace with your frontend URL
       methods: ["GET", "POST"],
       credentials: true,
     },
