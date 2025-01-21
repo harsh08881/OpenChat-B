@@ -5,7 +5,7 @@ const { generatePeerId }  = require('./utils/function')
 const initSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000", // Replace with your frontend URL
+      origin: "https://vodeo-three.vercel.app", // Replace with your frontend URL
       methods: ["GET", "POST"],
       credentials: true,
     },
@@ -23,7 +23,12 @@ const initSocket = (server) => {
 
     liveUsers[socket.user.userId] = socket.id;
     console.log(`Live users: ${JSON.stringify(liveUsers)}`);
+
+
+    socket.emit("liveUserCount", Object.keys(liveUsers).length);
+
     // Listen for "match" event where user signals availability
+
     socket.on("match", () => {
         if (liveUsers[socket.user.userId]) {
         if (!availableForMatch.includes(socket.user.userId)) {
@@ -49,6 +54,7 @@ const initSocket = (server) => {
       availableForMatch = availableForMatch.filter((id) => id !== socket.user.userId);
 
       console.log(`User ${socket.user.userId} removed from live and available lists.`);
+      console.log(liveUsers)
     });
 
     function matchUsers(availableForMatch, liveUsers, io) {
@@ -79,8 +85,7 @@ const initSocket = (server) => {
       
         return availableForMatch;  // Return the updated list of available users
       }
-      
-      
+       
   });
 
 
