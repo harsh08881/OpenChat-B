@@ -32,7 +32,7 @@ const googleLogin = async (req, res) => {
 
     // Generate a JWT token for the logged-in user
     const jwtToken = jwt.sign({ userId: user._id }, SECRET_KEY, {
-      expiresIn: "1h", // Token expiry time (adjust as needed)
+      expiresIn: "5h", // Token expiry time (adjust as needed)
     });
 
     // Respond with the JWT token
