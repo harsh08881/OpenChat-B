@@ -27,25 +27,29 @@ app.use(cors(corsOptions));
 connectDB();
 
 // Routes
-app.use('/', router);
 
-// Create HTTP server and bind it to Express
-const server = http.createServer(app);
+const server = app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
 
 
 const peerServer = ExpressPeerServer(server, {
   debug: true,
-  path: '/peerjs',  // Path for PeerJS
 });
 
 app.use('/peerjs', peerServer);
+app.use('/', router);
+
+peerServer.on('error', (err) => {
+  console.error('Peer Server Error:', err);
+});
+
+
+
+
 
 // Initialize Socket.IO
 initSocket(server);
 
-// Start server
-server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
 
 module.exports = app;
