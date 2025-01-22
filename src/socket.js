@@ -37,13 +37,14 @@ const initSocket = (server) => {
       // Store both Peer ID and user ID in the availableForMatch array
       const userMatchData = {
           userId: socket.user.userId,  // Save the user's ID
-          peerId: peerId               // Save the Peer ID provided by the user
+          peerId: peerId ,   
+          socketId:socket.id         // Save the Peer ID provided by the user
       };
 
       // Check if the Peer ID is already in the availableForMatch list
-      if (!availableForMatch.some(user => user.userId === userId)) {
+      if (!availableForMatch.some(user => user.peerId === peerId)) {
           availableForMatch.push(userMatchData);
-          console.log(`User ${socket.user.userId} with Peer ID ${peerId} is now available for match.`);
+          console.log(availableForMatch);
       } else {
           console.log(`User with Peer ID ${peerId} is already available for match.`);
       }
