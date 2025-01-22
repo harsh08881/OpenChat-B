@@ -77,8 +77,11 @@ const initSocket = (server) => {
           // Emit the matched event to both users
           io.to(liveUsers[user1]).emit("matched", { matchedWith: user2, commonId });
           io.to(liveUsers[user2]).emit("matched", { matchedWith: user1, commonId });
+
+          io.to(liveUsers[user1]).emit("matched", { isInitiator: true, commonId, matchedWith: user2 });
+          io.to(liveUsers[user2]).emit("matched", { isInitiator: false, commonId, matchedWith: user1 });
       
-          console.log(`Matched User ${user1} with User ${user2}`);
+          console.log(`Matched User ${user1} with User ${user2} using Peer ID ${commonId}`);
         } else {
           console.log("Not enough users available for match yet.");
         }
