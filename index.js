@@ -46,8 +46,6 @@ peerServer.on('error', (err) => {
 
 
 
-
-
 // Initialize Socket.IO
 initSocket(server);
 

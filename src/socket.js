@@ -29,22 +29,34 @@ const initSocket = (server) => {
 
     // Listen for "match" event where user signals availability
 
-    socket.on("match", () => {
-        if (liveUsers[socket.user.userId]) {
-        if (!availableForMatch.includes(socket.user.userId)) {
-            availableForMatch.push(socket.user.userId);
-            console.log(`User ${socket.user.userId} is now available for match.`);
-        }
+   // Modify the event to save both Peer ID and user ID
+socket.on("match", (peerId) => {
+  // Check if the user is live
+  if (liveUsers[socket.user.userId]) {
+      // Store both Peer ID and user ID in the availableForMatch array
+      const userMatchData = {
+          userId: socket.user.userId,  // Save the user's ID
+          peerId: peerId               // Save the Peer ID provided by the user
+      };
 
-        availableForMatch = matchUsers(availableForMatch, liveUsers, io);
+      // Check if the Peer ID is already in the availableForMatch list
+      if (!availableForMatch.some(user => user.peerId === peerId)) {
+          availableForMatch.push(userMatchData);
+          console.log(`User ${socket.user.userId} with Peer ID ${peerId} is now available for match.`);
+      } else {
+          console.log(`User with Peer ID ${peerId} is already available for match.`);
+      }
+
+      // Call the function to check and match users
+      availableForMatch = matchUsers(availableForMatch, liveUsers, io);
+
+  } else {
+      console.log(`User ${socket.user.userId} is not live, cannot match.`);
+  }
+});
 
   
-        } else {
-            console.log(`User ${socket.user.userId} is not live, cannot match.`);
-        }
-     
-    });
-
+  
     // Handle disconnect
     socket.on("disconnect", () => {
       console.log("User disconnected:", socket.user.userId);
@@ -56,39 +68,40 @@ const initSocket = (server) => {
       console.log(`User ${socket.user.userId} removed from live and available lists.`);
       console.log(liveUsers)
     });
-
     function matchUsers(availableForMatch, liveUsers, io) {
-        if (availableForMatch.length >= 2) {
-          const user1 = availableForMatch[0]; // Assume user1 is the first user in the list
-      
+      if (availableForMatch.length >= 2) {
+          // Assume user1 is the first user in the list
+          const user1 = availableForMatch[0];
+          
+          // Get the Peer ID for user1
+          const user1PeerId = user1.peerId; // Assuming peerId is stored in the user object
+  
           // Get a random index, ensuring it's not the same as user1
           let randomIndex = Math.floor(Math.random() * availableForMatch.length);
           while (availableForMatch[randomIndex] === user1) {
-            randomIndex = Math.floor(Math.random() * availableForMatch.length);
+              randomIndex = Math.floor(Math.random() * availableForMatch.length);
           }
-      
+  
           const user2 = availableForMatch[randomIndex]; // Randomly selected user
-      
+  
+          // Get the Peer ID for user2
+          const user2PeerId = user2.peerId; // Assuming peerId is stored in the user object
+  
           // Remove the matched users from the available-for-match list
-          availableForMatch = availableForMatch.filter((userId) => userId !== user1 && userId !== user2);
-
-          const commonId = generatePeerId();
-      
-          // Emit the matched event to both users
-          io.to(liveUsers[user1]).emit("matched", { matchedWith: user2, commonId });
-          io.to(liveUsers[user2]).emit("matched", { matchedWith: user1, commonId });
-
-          io.to(liveUsers[user1]).emit("matched", { isInitiator: true, commonId, matchedWith: user2 });
-          io.to(liveUsers[user2]).emit("matched", { isInitiator: false, commonId, matchedWith: user1 });
-      
-          console.log(`Matched User ${user1} with User ${user2} using Peer ID ${commonId}`);
-        } else {
+          availableForMatch = availableForMatch.filter((user) => user !== user1 && user !== user2);
+  
+          // Emit match event to both users with their Peer IDs
+          io.to(liveUsers[user1.userId].socketId).emit("matched", { isInitiator: true, commonId: user1PeerId, matchedWith: user2PeerId });
+          io.to(liveUsers[user2.userId].socketId).emit("matched", { isInitiator: false, commonId: user2PeerId, matchedWith: user1PeerId });
+  
+          console.log(`Matched User ${user1.userId} with User ${user2.userId} using Peer IDs ${user1PeerId} and ${user2PeerId}`);
+      } else {
           console.log("Not enough users available for match yet.");
-        }
-      
-        return availableForMatch;  // Return the updated list of available users
       }
-       
+  
+      return availableForMatch; // Return the updated list of available users
+  }
+     
   });
 
 
