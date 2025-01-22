@@ -96,8 +96,8 @@ const initSocket = (server) => {
           availableForMatch = availableForMatch.filter((user) => user !== user1 && user !== user2);
   
           // Emit match event to both users with their Peer IDs
-          io.to(liveUsers[user1.userId].socketId).emit("matched", { isInitiator: true, commonId: user1PeerId, matchedWith: user2PeerId });
-          io.to(liveUsers[user2.userId].socketId).emit("matched", { isInitiator: false, commonId: user2PeerId, matchedWith: user1PeerId });
+          io.to(user1.socketId).emit("matched", { isInitiator: true, commonId: user1PeerId, matchedWith: user2PeerId });
+          io.to(user2.socketId).emit("matched", { isInitiator: false, commonId: user2PeerId, matchedWith: user1PeerId });
   
           console.log(`Matched User ${user1.userId} with User ${user2.userId} using Peer IDs ${user1PeerId} and ${user2PeerId}`);
       } else {
