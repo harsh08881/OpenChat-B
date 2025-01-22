@@ -30,9 +30,10 @@ const initSocket = (server) => {
     // Listen for "match" event where user signals availability
 
    // Modify the event to save both Peer ID and user ID
-socket.on("match", (peerId) => {
+    socket.on("match", (peerId) => { 
+    console.log("match")
   // Check if the user is live
-  if (liveUsers[socket.user.userId]) {
+     if (liveUsers[socket.user.userId]) {
       // Store both Peer ID and user ID in the availableForMatch array
       const userMatchData = {
           userId: socket.user.userId,  // Save the user's ID
@@ -40,15 +41,18 @@ socket.on("match", (peerId) => {
       };
 
       // Check if the Peer ID is already in the availableForMatch list
-      if (!availableForMatch.some(user => user.peerId === peerId)) {
+      if (!availableForMatch.some(user => user.userId === userId)) {
           availableForMatch.push(userMatchData);
           console.log(`User ${socket.user.userId} with Peer ID ${peerId} is now available for match.`);
       } else {
           console.log(`User with Peer ID ${peerId} is already available for match.`);
       }
 
+      console.log(availableForMatch)
+
       // Call the function to check and match users
       availableForMatch = matchUsers(availableForMatch, liveUsers, io);
+    
 
   } else {
       console.log(`User ${socket.user.userId} is not live, cannot match.`);
