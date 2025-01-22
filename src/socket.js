@@ -27,12 +27,9 @@ const initSocket = (server) => {
 
     socket.emit("liveUserCount", Object.keys(liveUsers).length);
 
-    // Listen for "match" event where user signals availability
-
-   // Modify the event to save both Peer ID and user ID
+     // Modify the event to save both Peer ID and user ID
     socket.on("match", (peerId) => { 
-    console.log("match")
-  // Check if the user is live
+    // Check if the user is live
      if (liveUsers[socket.user.userId]) {
       // Store both Peer ID and user ID in the availableForMatch array
       const userMatchData = {
@@ -44,7 +41,6 @@ const initSocket = (server) => {
       // Check if the Peer ID is already in the availableForMatch list
       if (!availableForMatch.some(user => user.peerId === peerId)) {
           availableForMatch.push(userMatchData);
-          console.log(availableForMatch);
       } else {
           console.log(`User with Peer ID ${peerId} is already available for match.`);
       }
@@ -68,10 +64,15 @@ const initSocket = (server) => {
 
       // Remove user from the liveUsers and availableForMatch lists if they disconnect
       delete liveUsers[socket.user.userId];
-      availableForMatch = availableForMatch.filter((id) => id !== socket.user.userId);
+   
 
-      console.log(`User ${socket.user.userId} removed from live and available lists.`);
-      console.log(liveUsers)
+        // Remove user from the availableForMatch array
+      availableForMatch = availableForMatch.filter(
+      (user) => user.userId !== socket.user.userId
+      );
+     
+      console.log("Live Users:", liveUsers);
+      console.log("Available for Match:", availableForMatch);
     });
     function matchUsers(availableForMatch, liveUsers, io) {
       if (availableForMatch.length >= 2) {
@@ -100,6 +101,7 @@ const initSocket = (server) => {
           io.to(user2.socketId).emit("matched", { isInitiator: false, commonId: user2PeerId, matchedWith: user1PeerId });
   
           console.log(`Matched User ${user1.userId} with User ${user2.userId} using Peer IDs ${user1PeerId} and ${user2PeerId}`);
+          console.log(availableForMatch);
       } else {
           console.log("Not enough users available for match yet.");
       }
