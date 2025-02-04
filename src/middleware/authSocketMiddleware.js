@@ -23,7 +23,11 @@ const socketAuthMiddleware = (socket, next) => {
     // Proceed to the next middleware
     next();
   } catch (error) {
-    console.error("Token verification failed during handshake:", error.message);
+    console.error("❌ Token verification failed:", error.message);
+
+    // Send an error event to the client before rejecting
+    socket.emit("token_expired", { message: "Token has expired or is invalid" });
+
     return next(new Error("Forbidden: Invalid token"));
   }
 };
