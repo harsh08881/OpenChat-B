@@ -14,7 +14,7 @@ const app = express();
 const corsOptions = {
   origin: "*", // Replace with your frontend URL (e.g., http://localhost:3000)
   methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,  // Allow credentials (cookies, authentication tokens)
 };
 
