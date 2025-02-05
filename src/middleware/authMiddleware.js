@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { SECRET_KEY } =- require('../utils/constant')
+const { SECRET_KEY } = require('../utils/constant')
 
 /**
  * Middleware to verify the JWT token in the request headers
@@ -13,11 +13,13 @@ const verifyToken = (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1]; // Extract token after "Bearer"
+  console.log('JWT_SECRET:', SECRET_KEY);
+
 
   try {
     // Verify the token
     const decoded = jwt.verify(token, SECRET_KEY);
-
+   console.log(decoded)
     // Attach decoded user data to the request object
     req.user = decoded;
 

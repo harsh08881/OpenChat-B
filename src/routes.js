@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const authController = require('./controller/authController')
+const userController = require('./controller/userController')
+const verifyToken = require('./middleware/authMiddleware')
 
 
 router.get("/", (req, res) => {
@@ -10,6 +12,7 @@ router.get("/", (req, res) => {
 
 
 router.post('/google', authController.googleLogin);
+router.get('/profile', verifyToken,  userController.getProfile);
 
 
 

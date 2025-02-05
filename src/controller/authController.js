@@ -1,8 +1,6 @@
 const querystring = require("querystring");
 const axios = require("axios");
-const {
-  SECRET_KEY,
-} = require("../utils/constant");
+const { SECRET_KEY } = require("../utils/constant");
 const { saveGoogleUser } = require("../services/auth");
 const jwt = require("jsonwebtoken");
 
@@ -34,7 +32,7 @@ const googleLogin = async (req, res) => {
     const jwtToken = jwt.sign({ userId: user._id }, SECRET_KEY, {
       expiresIn: "5d", // Token expiry time set to 5 days
     });
-    
+
     // Respond with the JWT token
     res.status(200).json({ message: "Login successful", token: jwtToken });
   } catch (error) {
